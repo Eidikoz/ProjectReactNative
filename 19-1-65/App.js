@@ -2,8 +2,8 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack'
-import HomeScreen from './screens/HomeScreen.js';
-import AboutScreen from './screens/AboutScreen.js';
+import HomeScreen from './screens/HomeScreen';
+import AboutScreen from './screens/AboutScreen';
 
 const Stack = createStackNavigator();
 
@@ -14,7 +14,7 @@ const App = () => {
         initialRouteName="Home"
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#0096DA',
+            backgroundColor: '#B983FF',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
