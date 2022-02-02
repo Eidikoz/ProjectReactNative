@@ -14,7 +14,7 @@ import {
     DrawerItem,
   } from '@react-navigation/drawer';
   
-  const CustomSidebarMenu = (props) => {
+  const CustomSidebarMenu = props => {
     return (
       <SafeAreaView style={{flex: 1}}>
         {/* Top Large Image */}
@@ -38,7 +38,10 @@ import {
               }}>
               Rate Us
             </Text>
-            <Image source={require('../assets/star_filled.png')} />
+            <Image
+              style={{marginLeft:5,width: 15, height: 15}}
+              source={require('../assets/star_filled.png')}
+            />
           </View>
         </DrawerContentScrollView>
       </SafeAreaView>

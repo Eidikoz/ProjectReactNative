@@ -7,6 +7,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import FirstPage from './pages/FirstPage';
 import SecondPage from './pages/SecondPage';
 import ThirdPage from './pages/ThirdPage';
+import CustomSidebarMenu from './pages/CustomSidebarMenu';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -36,7 +37,7 @@ function firstScreeenStack({navigation}) {
       initialRouteName="Firstpage"
       screenOptions={{
         // Header Color
-        headerStyle: {backgroundColor: '#B983FF'},
+        headerStyle: {backgroundColor: '#94B3FD'},
         // Header Text Color
         headerTintColor: '#fff',
         // Header Text Style
@@ -60,7 +61,7 @@ function secondScreeenStack({navigation}) {
       initialRouteName="Firstpage"
       screenOptions={{
         // Header Color
-        headerStyle: {backgroundColor: '#B983FF'},
+        headerStyle: {backgroundColor: '#94B3FD'},
         // Header Text Color
         headerTintColor: '#fff',
         // Header Text Style
@@ -88,9 +89,10 @@ const App = () => {
     <NavigationContainer>
       <Drawer.Navigator
         drawerContentOptions={{
-          activeTintColor: '#e91263',
+          activeTintColor: '#94B3FD',
           itemStyle: {marginVertical: 5},
-        }}>
+        }}
+        drawerContent={props => <CustomSidebarMenu {...props} />}>
         <Drawer.Screen
           name="FirstPage"
           component={firstScreeenStack}
