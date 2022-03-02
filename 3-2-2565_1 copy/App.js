@@ -1,15 +1,22 @@
+import {styles} from './components/styles';
+
 import React from 'react';
-import { styles } from './components/styles';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+
+import {styles} from './components/styles';
+
 import HomeScreen from './screens/HomeScreen';
 import AboutScreen from './screens/AboutScreen';
-import RegisterScreen from './screens/RegisterScreen';
 import ProductScreen from './screens/ProductScreen';
 import DetailScreen from './screens/DetailScreen';
 import MenuScreen from './screens/MenuScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import LoginScreen from './screens/LoginScreen';
+
+import UserStoreProvider from './context/UserContext';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -45,6 +52,11 @@ function HomeStack() {
         component={RegisterScreen}
         options={{title: 'Register Page'}}
       />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{title: 'Login Page'}}
+      />
     </Stack.Navigator>
   );
 }
@@ -71,9 +83,9 @@ function ProductStack() {
         options={{title: 'Product Page'}}
       />
       <Stack.Screen
-        name="Details"
+        name="Detail"
         component={DetailScreen}
-        options={{title: 'Details Page'}}
+        options={{title: 'Detail Page'}}
       />
     </Stack.Navigator>
   );
@@ -81,27 +93,21 @@ function ProductStack() {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Drawer.Navigator
-        initialRouteName="HomeStack"
-        drawerPosition="left"
-        drawerContentOptions={{
-          activeTintColor: '#e91263',
-          itemStyle: {marginVertical: 5},
-        }}
-        drawerContent={props => <MenuScreen {...props} />}>
-        <Drawer.Screen
-          name="HomeStack"
-          component={HomeStack}
-          // options={{drawerLabel: 'Home Stack'}}
-        />
-        <Drawer.Screen
-          name="ProductStack"
-          component={ProductStack}
-          // options={{drawerLabel: 'Product Stack'}}
-        />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <UserStoreProvider>
+      <NavigationContainer>
+        <Drawer.Navigator
+          initialRouteName="HomeStack"
+          drawerPosition="left"
+          drawerContentOptions={{
+            activeTintColor: '#e91263',
+            itemStyle: {marginVertical: 5},
+          }}
+          drawerContent={props => <MenuScreen {...props} />}>
+          <Drawer.Screen name="HomeStack" component={HomeStack} />
+          <Drawer.Screen name="ProductStack" component={ProductStack} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </UserStoreProvider>
   );
 };
 
