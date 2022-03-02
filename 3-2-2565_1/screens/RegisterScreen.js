@@ -1,8 +1,7 @@
-import {StyleSheet, View, SafeAreaView} from 'react-native';
+import { styles } from '../components/styles';
 import React from 'react';
 import {
   Container,
-  Header,
   Content,
   Form,
   Item,
@@ -18,8 +17,7 @@ import * as Yup from 'yup';
 
 const validateSchema = Yup.object().shape({
   name: Yup.string()
-    .min(2, 'ชื่อต้องมีความยาวอย่างน้อย 3 ตัวอักษร')
-    .max(20, 'ชื่อต้องมีความยาวไม่เกิน 20 ตัวอักษร')
+    .min(2, 'ชื่อต้องมีความยาวอย่างน้อย 2 ตัวอักษร')
     .required('กรุณากรอกชื่อ'),
   email: Yup.string().email('อีเมลไม่ถูกต้อง').required('กรุณากรอกอีเมล'),
   password: Yup.string()
@@ -32,14 +30,15 @@ const RegisterScreen = ({navigation}) => {
     <Container>
       <Content padder>
         <Formik
-          // the value name and startnig value
+          // ค่าเริ่มต้นของข้อมูล โดยกำหนดให้ตรงกับกับ backend
           initialValues={{
             name: '',
             email: '',
             password: '',
           }}
-          validationSchema={validateSchema}
-          onSubmit={async values => {
+          validationSchema={ValidateSchema}
+          // เมื่อคลิกปุ่ม Register ให้ทำงานส่วนนี้
+          onSubmit={async (values, {setSubmitting}) => {
             // same shape as initial values
             // console.log(values);
             // alert(JSON.stringify(values));
@@ -51,12 +50,18 @@ const RegisterScreen = ({navigation}) => {
                 password: values.password,
               });
               alert(res.data.message);
+              // กลับหน้าหลัก
               navigation.navigate('Home');
             } catch (error) {
+              //ถ้าไม่สามารถบันทึกข้อมูลลง server ได้ เช่น อีเมลซ้ำ
               alert(error.response.data.errors.email[0]);
+            } finally {
+              // ให้ปุ่ม Register กลับไปมาใช้งานได้อีก
+              setSubmitting(false);
             }
           }}>
-          {/*errors is for validating, touched is for when component is unclicked*/}
+          {/* errors ใช้สำหรับตรวจสอบ state (ถ้าผู้ใช้ไม่กรอกข้อมูล จะให้ error อะไรเกิดขึ้น) */}
+          {/* touched เมื่อผู้ใช้ไปกดที่ name และเลื่อนเมาส์ออกไปด้านนอกช่อง input โดยไม่กรอกข้อมูล */}
           {({
             errors,
             touched,
@@ -68,6 +73,7 @@ const RegisterScreen = ({navigation}) => {
             setSubmitting,
           }) => (
             <Form>
+              {/* กำหนดให้มีเส้นสีแดงถ้าผู้ใช้ไม่กรอกข้อมูลชื่อ */}
               <Item
                 fixedLabel
                 error={errors.name && touched.name ? true : false}>
@@ -93,7 +99,6 @@ const RegisterScreen = ({navigation}) => {
                   value={values.email}
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
-                  keyboardType="email-address"
                 />
                 {errors.email && touched.email && <Icon name="close-circle" />}
               </Item>
@@ -125,13 +130,13 @@ const RegisterScreen = ({navigation}) => {
               <Button
                 block
                 large
-                style={{marginTop: 30, backgroundColor: '#f75d59'}}
+                style={{marginTop: 30, backgroundColor: 'grey'}}
                 onPress={() => {
                   handleSubmit();
+                  // setSubmitting(false);
                 }}
                 // If submitted, disable button
                 disabled={isSubmitting}>
-                
                 <Text
                   style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>
                   Register

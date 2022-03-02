@@ -13,19 +13,25 @@ import {
   Label,
 } from 'native-base';
 
-import axios from 'axios';
-
 import {Formik} from 'formik';
 import * as Yup from 'yup';
+
+import axios from 'axios';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {userStoreContext} from '../context/UserContext';
 
 const ValidateSchema = Yup.object().shape({
   email: Yup.string().email('รูปแบบอีเมลไม่ถูกต้อง').required('กรุณาป้อนอีเมล'),
   password: Yup.string()
-  .min(8, 'รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร')
-  .required('กรุณากรอกรหัสผ่าน'),
+    .min(3, 'รหัสผ่านต้องมีความยาวอย่างน้อย 3 ตัวอักษร')
+    .required('กรุณาป้อนรหัสผ่าน'),
 });
 
 const LoginScreen = ({navigation}) => {
+  const userStore = React.useContext(userStoreContext);
+
   return (
     <Container>
       <Content padder>
@@ -47,12 +53,31 @@ const LoginScreen = ({navigation}) => {
                 email: values.email,
                 password: values.password,
               });
-              alert(res.data.message);
-              // กลับหน้าหลัก
+              // alert(JSON.stringify(res.data));
+              // เก็บ token ลงเครื่อง
+              await AsyncStorage.setItem('@token', JSON.stringify(res.data));
+              // get profile >> การทำงานที่ postman
+              const urlProfile = 'https://api.codingthailand.com/api/profile';
+              const resProfile = await axios.get(urlProfile, {
+                headers: {
+                  Authorization: 'Bearer ' + res.data.access_token,
+                },
+              });
+              // alert(JSON.stringify(resProfile.data.data.user));
+              // เก็บข้อมูล profile ลง AsyncStorage
+              await AsyncStorage.setItem(
+                '@profile',
+                JSON.stringify(res_profile.data.data.user),
+              );
+
+              // get and update profile by context (Global State)
+              const profile = await AsyncStorage.getItem('@profile');
+              userStore.updateProfile(JSON.parse(profile));
+
+              alert('เข้าสู่ระบบเรียบร้อยแล้ว');
               navigation.navigate('Home');
             } catch (error) {
-              //ถ้าไม่สามารถบันทึกข้อมูลลง server ได้ เช่น อีเมลซ้ำ
-              alert(error.response.data.errors.email[0]);
+              alert(error.response.data.message);
             } finally {
               // ให้ปุ่ม Register กลับไปมาใช้งานได้อีก
               setSubmitting(false);
