@@ -1,4 +1,3 @@
-import { styles } from '../components/styles';
 import {StyleSheet, View, SafeAreaView} from 'react-native';
 import React from 'react';
 import {
@@ -28,7 +27,7 @@ const validateSchema = Yup.object().shape({
     .required('กรุณากรอกรหัสผ่าน'),
 });
 
-const RegisterScreen = () => {
+const RegisterScreen = ({navigation}) => {
   return (
     <Container>
       <Content padder>
@@ -40,12 +39,34 @@ const RegisterScreen = () => {
             password: '',
           }}
           validationSchema={validateSchema}
-          onSubmit={values => {
+          onSubmit={async values => {
             // same shape as initial values
-            console.log(values);
+            // console.log(values);
+            // alert(JSON.stringify(values));
+            try {
+              const url = 'https://api.codingthailand.com/api/register';
+              const res = await axios.post(url, {
+                name: values.name,
+                email: values.email,
+                password: values.password,
+              });
+              alert(res.data.message);
+              navigation.navigate('Home');
+            } catch (error) {
+              alert(error.response.data.errors.email[0]);
+            }
           }}>
           {/*errors is for validating, touched is for when component is unclicked*/}
-          {({errors, touched, values, handleChange, handleBlur}) => (
+          {({
+            errors,
+            touched,
+            values,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+            setSubmitting,
+          }) => (
             <Form>
               <Item
                 fixedLabel
@@ -72,6 +93,7 @@ const RegisterScreen = () => {
                   value={values.email}
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
+                  keyboardType="email-address"
                 />
                 {errors.email && touched.email && <Icon name="close-circle" />}
               </Item>
@@ -103,26 +125,19 @@ const RegisterScreen = () => {
               <Button
                 block
                 large
-                style={{marginTop: 30, backgroundColor: 'pink'}}>
+                style={{marginTop: 30, backgroundColor: '#f75d59'}}
+                onPress={() => {
+                  handleSubmit();
+                }}
+                // If submitted, disable button
+                disabled={isSubmitting}>
+                
                 <Text
                   style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>
                   Register
                 </Text>
               </Button>
             </Form>
-            // <Form>
-            //   <Field name="firstName" />
-            //   {errors.firstName && touched.firstName ? (
-            //     <div>{errors.firstName}</div>
-            //   ) : null}
-            //   <Field name="lastName" />
-            //   {errors.lastName && touched.lastName ? (
-            //     <div>{errors.lastName}</div>
-            //   ) : null}
-            //   <Field name="email" type="email" />
-            //   {errors.email && touched.email ? <div>{errors.email}</div> : null}
-            //   <button type="submit">Submit</button>
-            // </Form>
           )}
         </Formik>
       </Content>
